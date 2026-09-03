@@ -1,0 +1,114 @@
+.section { margin-bottom: 32px; }
+
+.sectionHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+  padding: 18px 20px;
+}
+
+.empty {
+  font-size: 13px;
+  color: var(--text-faint);
+  line-height: 1.7;
+  max-width: 62ch;
+}
+
+.legend { display: flex; gap: 16px; margin-bottom: 14px; }
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.legendDot { width: 7px; height: 7px; border-radius: 2px; }
+.legendDot[data-tone='up'] { background: var(--accent); }
+.legendDot[data-tone='down'] { background: #4a4b52; }
+
+.chart {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 10px;
+  align-items: end;
+}
+
+.column { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+
+.bars {
+  height: 96px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+}
+
+.bar {
+  width: 12px;
+  min-height: 2px;
+  border-radius: 2px 2px 0 0;
+  transition: height 200ms ease;
+}
+.bar[data-tone='up'] { background: var(--accent); }
+.bar[data-tone='down'] { background: #4a4b52; }
+.bar[data-empty='true'] { background: var(--line-strong); height: 2px !important; }
+
+.columnLabel {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-faint);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.footRow {
+  display: flex;
+  gap: 36px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.footLabel { font-size: 12px; color: var(--text-faint); margin-bottom: 2px; }
+.footValue { font-family: var(--font-mono); font-size: 17px; font-weight: 500; }
+
+.typeList { display: flex; flex-direction: column; gap: 10px; }
+
+.typeRow {
+  display: grid;
+  grid-template-columns: minmax(90px, 150px) 1fr auto;
+  align-items: center;
+  gap: 14px;
+  font-size: 13px;
+}
+
+.typeName {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.typeTrack {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg-inset);
+  overflow: hidden;
+}
+
+.typeFill { height: 100%; background: var(--accent); border-radius: 3px; min-width: 2px; }
+
+.typeNum { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
+.typeOpen { color: var(--text-faint); }

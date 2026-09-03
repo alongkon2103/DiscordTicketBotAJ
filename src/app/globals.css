@@ -1,0 +1,148 @@
+/* ───────────────────────────────────────────────────────────────
+   โทเคนดีไซน์ — dark เดียว สีเดียว เน้นตัวอักษร
+   ไม่มี gradient ไม่มีเงา ไม่มีมุมมนใหญ่ เส้นแบ่งเป็นตัวจัดระเบียบหลัก
+   ─────────────────────────────────────────────────────────────── */
+
+:root {
+  --bg: #0a0a0b;
+  --bg-raised: #0f0f11;
+  --bg-inset: #08080a;
+  --bg-hover: #141416;
+
+  --line: #1c1d20;
+  --line-strong: #2a2b30;
+
+  --text: #eceded;
+  --text-muted: #8b8d94;
+  --text-faint: #5c5e66;
+
+  --accent: #e0a03c;
+  --accent-dim: #46340f;
+  --danger: #d65a44;
+  --danger-dim: #3d1a14;
+  --success: #5c9e70;
+
+  --radius: 5px;
+  --radius-sm: 3px;
+
+  --sidebar-w: 244px;
+
+  --font-sans: var(--font-thai), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-code), ui-monospace, monospace;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+h1 { font-size: 20px; }
+h2 { font-size: 16px; }
+h3 { font-size: 15px; }
+
+p { margin: 0; }
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+code,
+kbd,
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  font-variant-ligatures: none;
+}
+
+::selection {
+  background: var(--accent-dim);
+  color: var(--text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ── primitives ─────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+
+.btn:hover { background: var(--bg-hover); border-color: #3a3b41; }
+
+.btn-primary {
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
+}
+.btn-primary:hover { background: #fff; border-color: #fff; }
+
+.btn-danger { color: var(--danger); border-color: var(--danger-dim); }
+.btn-danger:hover { background: var(--danger-dim); border-color: var(--danger); }
+
+.btn-ghost { background: transparent; border-color: transparent; color: var(--text-muted); }
+.btn-ghost:hover { background: var(--bg-hover); color: var(--text); }
+
+.card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+}
+
+.label-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.muted { color: var(--text-muted); }
+.faint { color: var(--text-faint); }

@@ -1,0 +1,117 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 760px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.stat {
+  background: var(--bg-raised);
+  padding: 16px 18px;
+}
+
+.statValue {
+  font-family: var(--font-mono);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.statLabel {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.section { margin-bottom: 32px; }
+
+.sectionHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.connection {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+  padding: 18px 20px;
+}
+
+.connection[data-state='failed'] { border-left: 2px solid var(--danger); }
+.connection[data-state='ready'] { border-left: 2px solid var(--success); }
+.connection[data-state='connecting'] { border-left: 2px solid var(--accent); }
+
+.connectionRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.connectionMeta {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 132px 1fr;
+  gap: 4px 16px;
+  font-size: 13px;
+}
+
+.metaKey { color: var(--text-faint); }
+.metaValue { color: var(--text-muted); }
+
+.error {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-inset);
+  border: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.checklist {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+  overflow: hidden;
+}
+
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 13px 18px;
+  font-size: 14px;
+}
+
+.check + .check { border-top: 1px solid var(--line); }
+
+.checkMark {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 24px;
+  flex: none;
+  width: 14px;
+  text-align: center;
+}
+
+.check[data-done='true'] .checkMark { color: var(--success); }
+.check[data-done='false'] .checkMark { color: var(--text-faint); }
+
+.checkBody { flex: 1; }
+.check[data-done='true'] .checkTitle { color: var(--text-muted); }
+.checkHint { font-size: 13px; color: var(--text-faint); margin-top: 1px; }

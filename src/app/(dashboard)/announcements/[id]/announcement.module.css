@@ -1,0 +1,91 @@
+.mentionRow { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+
+.mentionBtn {
+  padding: 6px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--bg-inset);
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 120ms ease, color 120ms ease;
+}
+.mentionBtn:hover { color: var(--text); border-color: #3a3b41; }
+.mentionBtn[data-active='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.warn {
+  padding: 11px 14px;
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--bg-raised);
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+.importRow { display: flex; gap: 8px; }
+.importRow > :first-child { flex: 1; min-width: 0; }
+
+.statusCard {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+  padding: 14px 16px;
+  margin-bottom: 24px;
+  font-size: 13px;
+}
+
+.statusRow {
+  display: grid;
+  grid-template-columns: 104px 1fr;
+  gap: 3px 14px;
+}
+.statusKey { color: var(--text-faint); }
+.statusValue { color: var(--text-muted); }
+
+.link { color: var(--accent); }
+.link:hover { text-decoration: underline; }
+
+.deliveryList {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.delivery {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+}
+
+.deliveryDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--text-faint);
+}
+.deliveryDot[data-status='sent'] { background: var(--success); }
+.deliveryDot[data-status='failed'] { background: var(--danger); }
+
+.deliveryName { color: var(--text); flex: none; }
+
+.deliveryMeta {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

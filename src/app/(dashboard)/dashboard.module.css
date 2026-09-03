@@ -1,0 +1,14 @@
+.shell {
+  min-height: 100dvh;
+  padding-left: var(--sidebar-w);
+}
+
+.main {
+  max-width: 1040px;
+  padding: 40px 44px 96px;
+}
+
+@media (max-width: 900px) {
+  .shell { padding-left: 0; }
+  .main { padding: 28px 20px 72px; }
+}

@@ -1,0 +1,264 @@
+// SQLite ไม่รองรับ Json / String[] / enum ของ Prisma
+// ทุกอย่างที่เป็น list หรือ object จึงเก็บเป็น String ที่บรรจุ JSON
+// แล้ว parse ด้วย Zod ที่ src/lib/schema.ts — ย้ายไป PostgreSQL ได้โดยเปลี่ยนแค่ provider
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" // เปลี่ยนเป็น "postgresql" ตอนย้าย
+}
+
+// ── ตั้งค่าระดับเซิร์ฟเวอร์ (มีแถวเดียว id = "singleton") ────────────────
+
+model GuildSettings {
+  id String @id @default("singleton")
+
+  adminRoleIds       String  @default("[]") // role ที่เข้าหน้าเว็บได้ (นอกจาก OWNER_IDS)
+  ticketLogChannelId String?
+  timezone           String  @default("Asia/Bangkok")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ── Ticket ──────────────────────────────────────────────────────────────
+
+model TicketType {
+  id      String  @id @default(cuid())
+  name    String
+  emoji   String?
+  enabled Boolean @default(true)
+
+  /// ข้อความที่ตอบกลับเมื่อ enabled = false
+  disabledMessage String @default("ตอนนี้ปิดรับ ticket ประเภทนี้ชั่วคราว")
+
+  /// category ที่จะสร้างห้อง เรียงตามลำดับ — ถ้าอันแรกเต็ม 50 ห้องจะไหลไปอันถัดไป
+  categoryIds         String  @default("[]")
+  channelNameTemplate String  @default("ticket-{number}")
+  archiveCategoryId   String?
+
+  staffRoleIds   String @default("[]")
+  allowedRoleIds String @default("[]") // ว่าง = เปิดให้ทุกคน
+  deniedRoleIds  String @default("[]")
+
+  modalTitle String @default("เปิด Ticket")
+
+  /// embed + content ของข้อความแรกในห้อง
+  openPayload    String  @default("{}")
+  pingOpener     Boolean @default(true)
+  pingRoleIds    String  @default("[]")
+  showAnswers    Boolean @default(true)
+
+  maxOpenPerUser  Int @default(1)
+  cooldownSeconds Int @default(0)
+
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  fields     ModalField[]
+  panelItems PanelItem[]
+  tickets    Ticket[]
+}
+
+model ModalField {
+  id           String     @id @default(cuid())
+  ticketTypeId String
+  ticketType   TicketType @relation(fields: [ticketTypeId], references: [id], onDelete: Cascade)
+
+  /// text | select | user | role | channel | mentionable | radio | checkbox | file
+  kind        String
+  /// คีย์สำหรับอ้างในเทมเพลต เช่น {field.order_id}
+  key         String
+  label       String
+  description String?
+  required    Boolean @default(true)
+  /// ตัวเลือกเฉพาะ kind (style, minLength, options, maxValues, ...)
+  config      String  @default("{}")
+
+  sortOrder Int @default(0)
+
+  @@unique([ticketTypeId, key])
+  @@index([ticketTypeId])
+}
+
+model Panel {
+  id        String  @id @default(cuid())
+  name      String
+  channelId String?
+  messageId String?
+
+  /// embed + content ของตัว panel
+  payload String @default("{}")
+  /// buttons | select
+  layout  String @default("buttons")
+
+  selectPlaceholder String?
+  lastPublishedAt   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items PanelItem[]
+}
+
+model PanelItem {
+  id           String     @id @default(cuid())
+  panelId      String
+  panel        Panel      @relation(fields: [panelId], references: [id], onDelete: Cascade)
+  ticketTypeId String
+  ticketType   TicketType @relation(fields: [ticketTypeId], references: [id], onDelete: Cascade)
+
+  label String
+  emoji String?
+  /// primary | secondary | success | danger
+  style String  @default("secondary")
+  row   Int     @default(0)
+  /// คำอธิบายใต้ตัวเลือก ใช้เฉพาะ layout = select
+  description String?
+
+  sortOrder Int @default(0)
+
+  @@index([panelId])
+  @@index([ticketTypeId])
+}
+
+model Ticket {
+  id           String     @id @default(cuid())
+  number       Int        @unique
+  ticketTypeId String
+  ticketType   TicketType @relation(fields: [ticketTypeId], references: [id])
+
+  channelId String  @unique
+  openerId  String
+  openerTag String
+
+  /// open | archived | deleted
+  status String @default("open")
+
+  /// คำตอบจาก modal { key: { label, kind, value } }
+  answers      String @default("{}")
+  addedUserIds String @default("[]")
+
+  openedAt    DateTime  @default(now())
+  closedAt    DateTime?
+  closedById  String?
+  closedByTag String?
+  closeReason String?
+
+  transcript TicketTranscript?
+
+  @@index([status])
+  @@index([openerId])
+  @@index([ticketTypeId])
+}
+
+model TicketTranscript {
+  ticketId String @id
+  ticket   Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  /// JSON array ของข้อความทั้งหมดในห้อง
+  messages     String
+  messageCount Int    @default(0)
+
+  createdAt DateTime @default(now())
+}
+
+// ── คนเข้า/ออก ──────────────────────────────────────────────────────────
+
+model MemberEvent {
+  /// "join" | "leave"
+  id      String  @id
+  enabled Boolean @default(false)
+
+  channelId String?
+  /// embed + content
+  payload   String  @default("{}")
+
+  /// role ที่แจกอัตโนมัติตอนเข้า (ใช้เฉพาะ id = "join")
+  autoRoleIds String @default("[]")
+
+  updatedAt DateTime @updatedAt
+}
+
+// ── บันทึกคนเข้า/ออก ────────────────────────────────────────────────────
+
+/// เก็บไว้ทำสถิติย้อนหลัง — Discord ไม่มี API ให้ถามว่าเมื่อวานมีคนเข้ากี่คน
+model MemberLog {
+  id String @id @default(cuid())
+
+  /// join | leave
+  kind     String
+  userId   String
+  userTag  String
+
+  /// จำนวนสมาชิกทั้งเซิร์ฟเวอร์ ณ ตอนนั้น
+  memberCount Int
+  createdAt   DateTime @default(now())
+
+  @@index([kind, createdAt])
+  @@index([createdAt])
+}
+
+// ── ประกาศ ──────────────────────────────────────────────────────────────
+
+model Announcement {
+  id    String @id @default(cuid())
+  /// ชื่อไว้อ้างอิงในหน้าเว็บ ไม่ได้ส่งขึ้น Discord
+  name  String @default("")
+
+  payload String @default("{}")
+
+  /// none | everyone | here | roles
+  mentionMode    String @default("none")
+  mentionRoleIds String @default("[]")
+
+  /// draft | scheduled | sent | partial | failed
+  status      String    @default("draft")
+  scheduledAt DateTime?
+  sentAt      DateTime?
+
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  /// หนึ่งประกาศส่งได้หลายห้อง แต่ละห้องได้ message คนละอัน จึงต้องเก็บแยก
+  deliveries AnnouncementDelivery[]
+
+  @@index([status, scheduledAt])
+}
+
+model AnnouncementDelivery {
+  id             String       @id @default(cuid())
+  announcementId String
+  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+
+  channelId String
+  /// ไอดีข้อความใน Discord — มีค่าแล้วแปลว่าส่งไปแล้ว กดส่งอีกครั้งจะเป็นการแก้
+  messageId String?
+
+  /// pending | sent | failed
+  status String  @default("pending")
+  error  String?
+  sentAt DateTime?
+
+  @@unique([announcementId, channelId])
+  @@index([announcementId])
+}
+
+// ── Audit ───────────────────────────────────────────────────────────────
+
+model AuditLog {
+  id       String  @id @default(cuid())
+  actorId  String
+  actorTag String
+  action   String
+  target   String?
+  detail   String  @default("{}")
+
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}

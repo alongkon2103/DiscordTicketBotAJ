@@ -1,0 +1,94 @@
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 16px;
+}
+
+@media (max-width: 700px) {
+  .grid2 { grid-template-columns: 1fr; }
+}
+
+.colorRow { display: flex; gap: 8px; align-items: center; }
+
+.swatch {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: transparent;
+  cursor: pointer;
+  flex: none;
+}
+.swatch::-webkit-color-swatch-wrapper { padding: 3px; }
+.swatch::-webkit-color-swatch { border: none; border-radius: 3px; }
+
+.embedFields {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.embedField { padding: 14px; }
+.embedField + .embedField { border-top: 1px solid var(--line); }
+
+.embedFieldHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.embedFieldTitle {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.embedFieldActions { display: flex; gap: 4px; align-items: center; }
+
+.inlineToggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.inlineToggle input { accent-color: var(--accent); margin: 0; }
+
+.addRow { padding: 11px 14px; border-top: 1px solid var(--line); }
+
+.vars {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-inset);
+  padding: 12px 14px;
+}
+
+.varsHead {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 8px;
+}
+
+.varsList { display: flex; flex-wrap: wrap; gap: 5px; }
+
+.varChip {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 2px 7px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg-raised);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.varChip:hover { border-color: var(--accent); color: var(--accent); }
+
+.varsHint { margin-top: 9px; font-size: 12px; color: var(--text-faint); line-height: 1.6; }

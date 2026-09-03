@@ -1,0 +1,18 @@
+.detail {
+  font-size: 12px;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  max-width: 340px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.pageInfo { font-size: 13px; color: var(--text-faint); }

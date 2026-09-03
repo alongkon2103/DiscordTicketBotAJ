@@ -1,0 +1,19 @@
+node_modules/
+.next/
+out/
+build/
+data/
+*.db
+*.db-journal
+.env
+.env.backup
+.env*.local
+.DS_Store
+*.log
+next-env.d.ts
+
+# รูปที่อัปโหลดผ่านหน้าเว็บ
+public/uploads/
+
+# ไฟล์ตั้งค่าของเครื่องมือช่วยพัฒนา
+.claude/

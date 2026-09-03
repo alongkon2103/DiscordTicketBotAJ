@@ -1,0 +1,104 @@
+.log {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+  padding: 8px 16px 16px;
+  max-height: 640px;
+  overflow-y: auto;
+}
+
+.msg { display: flex; gap: 12px; padding: 8px 0; }
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--bg-hover);
+  border: 1px solid var(--line);
+  object-fit: cover;
+}
+
+.body { min-width: 0; flex: 1; }
+
+.head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.author { font-size: 14px; font-weight: 600; }
+
+.botTag {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  background: var(--accent-dim);
+  color: var(--accent);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.time { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); }
+
+.content { white-space: pre-wrap; word-break: break-word; font-size: 14px; }
+
+.embed {
+  margin-top: 6px;
+  border-left: 2px solid var(--line-strong);
+  background: var(--bg-inset);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+}
+.embedTitle { font-weight: 600; font-size: 14px; }
+.embedDesc { font-size: 13px; color: var(--text-muted); white-space: pre-wrap; }
+
+.files { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
+.thumb {
+  max-width: 220px;
+  max-height: 160px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  display: block;
+}
+
+.file {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--accent);
+}
+
+.empty { padding: 32px; text-align: center; color: var(--text-faint); font-size: 13px; }
+
+/* ── รายละเอียด ticket ─────────────────────────────────────────── */
+
+.meta {
+  display: grid;
+  grid-template-columns: 132px 1fr;
+  gap: 3px 16px;
+  font-size: 14px;
+  margin-bottom: 28px;
+}
+
+.metaKey { color: var(--text-faint); font-size: 13px; }
+.metaValue { color: var(--text); }
+
+.answers {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+
+.answer { padding: 12px 16px; }
+.answer + .answer { border-top: 1px solid var(--line); }
+
+.answerLabel {
+  font-size: 12px;
+  color: var(--text-faint);
+  margin-bottom: 2px;
+}
+
+.answerValue { font-size: 14px; white-space: pre-wrap; word-break: break-word; }
+.answerEmpty { color: var(--text-faint); font-style: italic; }

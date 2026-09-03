@@ -1,0 +1,116 @@
+.list { display: flex; flex-direction: column; gap: 12px; }
+
+.card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+  overflow: hidden;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-inset);
+}
+
+.index {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-faint);
+  flex: none;
+}
+
+.headTitle {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.headKind {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.headActions { display: flex; gap: 3px; flex: none; }
+
+.iconBtn {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-faint);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+.iconBtn:hover { background: var(--bg-hover); color: var(--text); }
+.iconBtn:disabled { opacity: 0.3; cursor: default; }
+.iconBtn:disabled:hover { background: transparent; color: var(--text-faint); }
+
+.body { padding: 16px 14px 2px; }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+@media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } }
+
+.options {
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg-inset);
+}
+
+.option { padding: 11px 12px; }
+.option + .option { border-top: 1px solid var(--line); }
+
+.optionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.optionIndex { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); }
+
+.optionGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+@media (max-width: 640px) { .optionGrid { grid-template-columns: 1fr; } }
+
+.addRow { padding: 10px 12px; border-top: 1px solid var(--line); }
+
+.empty {
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  padding: 24px;
+  text-align: center;
+  color: var(--text-faint);
+  font-size: 13px;
+}
+
+.channelTypes { display: flex; flex-wrap: wrap; gap: 12px; }
+
+.checkLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.checkLabel input { accent-color: var(--accent); margin: 0; }
+
+.limitNote {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--text-faint);
+}

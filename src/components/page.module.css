@@ -1,0 +1,32 @@
+.header {
+  padding-bottom: 20px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid var(--line);
+}
+
+.headerRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.title { font-size: 20px; }
+
+.lede {
+  margin-top: 6px;
+  max-width: 62ch;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.actions { flex: none; display: flex; gap: 8px; }
+
+.soon {
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  padding: 28px;
+  color: var(--text-faint);
+  font-size: 14px;
+  text-align: center;
+}

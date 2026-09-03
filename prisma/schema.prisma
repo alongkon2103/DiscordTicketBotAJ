@@ -1,13 +1,16 @@
-// SQLite ไม่รองรับ Json / String[] / enum ของ Prisma
-// ทุกอย่างที่เป็น list หรือ object จึงเก็บเป็น String ที่บรรจุ JSON
-// แล้ว parse ด้วย Zod ที่ src/lib/schema.ts — ย้ายไป PostgreSQL ได้โดยเปลี่ยนแค่ provider
+// list และ object ทุกอย่างเก็บเป็น String ที่บรรจุ JSON แล้ว parse ด้วย Zod ที่ชั้นแอป
+// (src/lib/schema/*) แทนการใช้ Json หรือ String[] ของ Prisma
+//
+// เดิมทำแบบนี้เพราะ SQLite ไม่รองรับชนิดพวกนั้น ตอนนี้ย้ายมา PostgreSQL แล้ว
+// แต่คงรูปแบบเดิมไว้ เพราะข้อมูลที่มีอยู่ถูกเขียนเป็น JSON string
+// และการ validate ด้วย Zod ให้ type ที่แน่นอนกว่าคอลัมน์ Json อยู่แล้ว
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite" // เปลี่ยนเป็น "postgresql" ตอนย้าย
+  provider = "postgresql"
 }
 
 // ── ตั้งค่าระดับเซิร์ฟเวอร์ (มีแถวเดียว id = "singleton") ────────────────

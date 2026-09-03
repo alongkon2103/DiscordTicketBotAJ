@@ -37,7 +37,8 @@ npm install
 | `OWNER_IDS` | Discord user ID ของคุณ (คั่นด้วย comma) เข้าหน้าเว็บได้เสมอ |
 | `SESSION_SECRET` | `node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"` |
 
-สร้างฐานข้อมูล:
+ต้องมี PostgreSQL ก่อน แล้วชี้ `DATABASE_URL` ไปที่ฐานข้อมูลนั้น
+(รูปแบบ `postgresql://user:password@host:5432/dbname`) จากนั้นสร้างตาราง:
 
 ```bash
 npx prisma migrate deploy
@@ -50,11 +51,13 @@ npx prisma migrate deploy
 - `SERVER MEMBERS INTENT` — จับคนเข้า/ออกเซิร์ฟเวอร์
 - `MESSAGE CONTENT INTENT` — อ่านข้อความตอนทำบันทึกแชท
 
-**Developer Portal → OAuth2 → Redirects** เพิ่ม:
+**Developer Portal → OAuth2 → Redirects** เพิ่มให้ตรงกับ `APP_URL` ที่ตั้งไว้:
 
 ```
-http://localhost:3000/api/auth/callback
+http://localhost:3500/api/auth/callback
 ```
+
+ถ้าขึ้น production ด้วยโดเมนจริง ให้เพิ่ม URL ของโดเมนนั้นอีกอันและแก้ `APP_URL` ตาม
 
 **สิทธิ์ตอนเชิญบอทเข้าเซิร์ฟเวอร์** — Manage Channels, Manage Roles, View Channels, Send Messages,
 Embed Links, Attach Files, Read Message History, Mention Everyone
@@ -68,7 +71,8 @@ Discord ไม่ให้แจก role ที่อยู่สูงกว่
 npm run dev
 ```
 
-เปิด http://localhost:3000
+เปิด http://localhost:3500 — พอร์ตตั้งไว้ที่ 3500 ทั้ง dev และ production
+จะได้ใช้ redirect URI ชุดเดียวกัน ไม่ต้องเพิ่มสองอันใน Developer Portal
 
 ## ขึ้น production
 
@@ -84,7 +88,7 @@ pm2 start ecosystem.config.js
 
 > **อย่ารันซ้อนกัน** — บอทกับหน้าเว็บอยู่โปรเซสเดียวกัน ถ้ารัน `npm run dev` พร้อมกับ pm2
 > จะมีบอทสองตัวต่อ Discord ด้วย token เดียวกัน ทำให้ทุกอย่างทำงานซ้ำสองรอบ
-> เช็คก่อนสตาร์ตด้วย `lsof -nP -iTCP:3000 -sTCP:LISTEN`
+> เช็คก่อนสตาร์ตด้วย `lsof -nP -iTCP:3500 -sTCP:LISTEN`
 
 ### การปิดบอท
 
@@ -104,10 +108,10 @@ pm2 start ecosystem.config.js
 | `npm run db:studio` | เปิด Prisma Studio ดูข้อมูลในฐานข้อมูล |
 | `node --env-file=.env scripts/data.mjs export` | ดัมพ์ข้อมูลทั้งหมดเป็น JSON |
 
-## ย้ายไป PostgreSQL
+## ฐานข้อมูล
 
-ดู [docs/postgres.md](docs/postgres.md) — สคีมาเตรียมไว้ให้แล้ว แก้ `provider` บรรทัดเดียว
-แล้วใช้สคริปต์ย้ายข้อมูลที่มีให้
+ใช้ PostgreSQL — `src/lib/prisma.ts` เลือก driver adapter จากรูปแบบของ `DATABASE_URL` ให้เอง
+การย้ายข้อมูลข้ามเครื่องหรือข้ามฐานข้อมูลใช้ `scripts/data.mjs` ดู [docs/postgres.md](docs/postgres.md)
 
 ## โครงสร้าง
 

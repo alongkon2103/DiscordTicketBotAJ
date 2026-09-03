@@ -17,3 +17,6 @@ public/uploads/
 
 # ไฟล์ตั้งค่าของเครื่องมือช่วยพัฒนา
 .claude/
+
+# แคชของ TypeScript
+*.tsbuildinfo

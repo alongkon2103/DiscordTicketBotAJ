@@ -1,63 +1,37 @@
-# ย้ายจาก SQLite ไป PostgreSQL
+# ฐานข้อมูล
 
-ทุก model ในสคีมาถูกออกแบบให้ย้ายได้อยู่แล้ว — ไม่มี `Json`, ไม่มี `String[]`, ไม่มี `enum`
-คอลัมน์ที่เก็บโครงสร้างเป็น `String` ที่บรรจุ JSON แล้ว parse ด้วย Zod ที่ชั้นแอป
-จึงไม่ต้องแก้ model ใดๆ มีแค่ `provider` บรรทัดเดียวที่ต้องเปลี่ยนด้วยมือ
+โปรเจกต์นี้ใช้ **PostgreSQL** — `provider` ใน `prisma/schema.prisma` ตั้งเป็น `postgresql` แล้ว
+และ `src/lib/prisma.ts` เลือก driver adapter จากรูปแบบของ `DATABASE_URL` ให้เองตอนรัน
 
-> Prisma ไม่ยอมให้ใส่ `env()` ที่ `provider` (ตรวจแล้วกับ Prisma 7.10 — ขึ้น validation error)
-> ส่วนการเลือก driver adapter ตอนรันจริง `src/lib/prisma.ts` ดูจาก `DATABASE_URL` ให้เองอัตโนมัติ
+## ตั้งค่าครั้งแรก
 
-## ขั้นตอน
+ชี้ `DATABASE_URL` ใน `.env` ไปที่ฐานข้อมูล:
 
-### 1. ดัมพ์ข้อมูลออกก่อน — ทำตอนที่ยังเป็น SQLite
+```
+DATABASE_URL=postgresql://user:password@host:5432/botdiscord
+```
+
+สร้างตารางทั้งหมด:
+
+```bash
+npx prisma migrate deploy
+```
+
+`migrate deploy` ใช้ไฟล์ migration ที่มีอยู่แล้วใน repo เหมาะกับ production
+ส่วน `migrate dev` เอาไว้ใช้ตอนแก้สคีมาระหว่างพัฒนา (มันจะสร้าง migration ใหม่ให้)
+
+## ย้ายข้อมูลข้ามฐานข้อมูล
+
+ใช้ตอนย้ายเครื่อง ย้ายจาก dev ไป production หรือย้อนกลับ
+
+ดัมพ์จากฐานข้อมูลที่ `DATABASE_URL` ชี้อยู่ตอนนั้น:
 
 ```bash
 node --env-file=.env scripts/data.mjs export
 ```
 
-ได้ไฟล์ `data/export.json` เก็บทุกตาราง ถ้าเป็นการติดตั้งใหม่ที่ยังไม่มีข้อมูลก็ข้ามข้อนี้ได้
-
-### 2. เตรียมฐานข้อมูล PostgreSQL
-
-ใช้ Docker ในเครื่อง:
-
-```bash
-docker run -d --name aj-postgres -p 5432:5432 -e POSTGRES_PASSWORD=changeme -e POSTGRES_DB=botdiscord postgres:17
-```
-
-หรือใช้บริการคลาวด์ (Neon, Supabase, Railway) แล้วคัดลอก connection string มา
-
-### 3. แก้ provider ในสคีมา
-
-เปิด `prisma/schema.prisma` แล้วเปลี่ยนบรรทัดเดียว:
-
-```prisma
-datasource db {
-  provider = "postgresql"   // เดิมคือ "sqlite"
-}
-```
-
-### 4. ชี้ DATABASE_URL ไปที่ฐานข้อมูลใหม่
-
-ใน `.env`:
-
-```
-DATABASE_URL=postgresql://postgres:changeme@localhost:5432/botdiscord
-```
-
-### 5. สร้าง migration ใหม่
-
-ไฟล์ migration เดิมเป็น SQL ของ SQLite ใช้กับ Postgres ไม่ได้ ต้องเริ่มใหม่:
-
-```bash
-rm -rf prisma/migrations
-```
-
-```bash
-npx prisma migrate dev --name init
-```
-
-### 6. นำข้อมูลเข้า
+ได้ไฟล์ `data/export.json` — เปลี่ยน `DATABASE_URL` ไปที่ปลายทาง รัน `npx prisma migrate deploy`
+ให้ตารางพร้อมก่อน แล้วค่อยนำเข้า:
 
 ```bash
 node --env-file=.env scripts/data.mjs import
@@ -65,28 +39,27 @@ node --env-file=.env scripts/data.mjs import
 
 สคริปต์เขียนทีละแถวตามลำดับ foreign key ถ้าแถวไหนพังจะบอกว่าแถวไหนแล้วทำต่อ ไม่ล้มทั้งก้อน
 
-### 7. รีสตาร์ต
+## ทำไม list กับ object ถึงเก็บเป็น String
 
-```bash
-npm run build && pm2 restart botdiscord-aj
-```
+คอลัมน์อย่าง `staffRoleIds`, `openPayload`, `answers` เก็บเป็น `String` ที่บรรจุ JSON
+แล้ว parse ด้วย Zod ที่ `src/lib/schema/*` แทนการใช้ `Json` หรือ `String[]` ของ Prisma
 
-## ตรวจว่าย้ายสำเร็จ
-
-เปิดหน้าเว็บแล้วดูว่า:
-
-- หน้า **ประเภท Ticket** ยังมีประเภทเดิมครบ พร้อม category และ role ที่ตั้งไว้
-- หน้า **Panel** ยังผูกกับห้องเดิม และปุ่มยังอยู่ครบ
-- หน้า **รายการ Ticket** ยังเปิด transcript เก่าดูได้
-- หน้า **บันทึกการใช้งาน** ยังมีประวัติเดิม
-
-## ถ้าจะย้อนกลับมา SQLite
-
-ทำกลับด้าน: export จาก Postgres → เปลี่ยน `provider` เป็น `"sqlite"` → เปลี่ยน `DATABASE_URL`
-เป็น `file:./data/app.db` → `rm -rf prisma/migrations` → `npx prisma migrate dev --name init` → import
+เดิมทำเพราะตอนพัฒนาใช้ SQLite ซึ่งไม่รองรับชนิดพวกนั้น ตอนนี้ย้ายมา Postgres แล้วแต่คงรูปแบบไว้
+เพราะข้อมูลที่มีอยู่ถูกเขียนเป็น JSON string แล้ว และการ validate ด้วย Zod ตอนอ่าน
+ให้ type ที่แน่นอนกว่าคอลัมน์ `Json` ที่เป็น `any` อยู่ดี
 
 ## ข้อควรรู้
 
-- `data/export.json` มีการตั้งค่าทั้งหมดของคุณอยู่ข้างใน อยู่ในโฟลเดอร์ `data/` ที่ถูก gitignore ไว้แล้ว
-- รูปที่อัปโหลดเก็บเป็นไฟล์ใน `public/uploads/` ไม่ได้อยู่ในฐานข้อมูล ต้องคัดลอกโฟลเดอร์นี้ตามไปด้วยถ้าย้ายเครื่อง
-- Postgres บังคับ foreign key เข้มกว่า SQLite ถ้ามีข้อมูลกำพร้าค้างอยู่ตอน import จะเห็น error รายแถวชัดเจน
+- รูปที่อัปโหลดเก็บเป็นไฟล์ใน `public/uploads/` ไม่ได้อยู่ในฐานข้อมูล
+  ต้องคัดลอกโฟลเดอร์นี้ตามไปด้วยถ้าย้ายเครื่อง
+- `data/export.json` มีการตั้งค่าทั้งหมดอยู่ข้างใน อยู่ในโฟลเดอร์ที่ gitignore ไว้แล้ว
+
+## ถ้าอยากกลับไปใช้ SQLite ตอนพัฒนา
+
+1. `node --env-file=.env scripts/data.mjs export` (ถ้ามีข้อมูลที่ต้องเก็บ)
+2. แก้ `provider` ใน `prisma/schema.prisma` เป็น `"sqlite"`
+3. เปลี่ยน `DATABASE_URL` เป็น `file:./data/app.db`
+4. `rm -rf prisma/migrations && npx prisma migrate dev --name init`
+5. `node --env-file=.env scripts/data.mjs import`
+
+โค้ดฝั่งแอปไม่ต้องแก้เลย — adapter เลือกให้เองจาก `DATABASE_URL`

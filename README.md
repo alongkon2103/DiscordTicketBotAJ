@@ -113,6 +113,11 @@ pm2 start ecosystem.config.js
 ใช้ PostgreSQL — `src/lib/prisma.ts` เลือก driver adapter จากรูปแบบของ `DATABASE_URL` ให้เอง
 การย้ายข้อมูลข้ามเครื่องหรือข้ามฐานข้อมูลใช้ `scripts/data.mjs` ดู [docs/postgres.md](docs/postgres.md)
 
+## เข้าใจโค้ดก่อนแก้
+
+[docs/ticket-flow.md](docs/ticket-flow.md) — อธิบาย flow ของระบบ ticket ตั้งแต่ตั้งค่าในเว็บ
+จนถึงตอนห้องถูกลบ พร้อมจุดที่ต้องระวังเวลาแก้โค้ด
+
 ## โครงสร้าง
 
 ```
